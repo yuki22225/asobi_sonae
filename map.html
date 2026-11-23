@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>遊んで、備える ― 地図</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="map-title-row">
+      <a href="index.html" class="back-btn">← ホーム</a>
+      <h1>避難の地図</h1>
+    </div>
+  </header>
+  <div id="map"></div>
+  <div id="evac-panel" class="evac-panel">
+    <p class="evac-title">何から避難しますか？</p>
+    <div class="evac-checks">
+      <label><input type="checkbox" class="evac-check" value="土砂災害">土砂災害</label>
+      <label><input type="checkbox" class="evac-check" value="洪水">洪水</label>
+      <label><input type="checkbox" class="evac-check" value="高潮">高潮</label>
+      <label><input type="checkbox" class="evac-check" value="津波">津波</label>
+      <label><input type="checkbox" class="evac-check" value="地震">地震</label>
+    </div>
+    <p id="evac-count" class="evac-count" role="status" aria-live="polite">何から避難するかを選んでください</p>
+    <a class="bousai-link" href="https://www.bousai.pref.hiroshima.lg.jp/" target="_blank" rel="noopener">避難所が開いているか・混み具合を見る（広島県防災Web）</a>
+    <div id="hazard-legend" class="hazard-legend" hidden>
+      <p id="hazard-zoom" class="hazard-zoom">地図を拡大すると、危険な範囲に色がつきます</p>
+      <div id="legend-dosha" class="legend-row" hidden>
+        <span class="legend-name">土砂災害</span>
+        <span class="legend-item"><i style="background:#f2c94c"></i>警戒区域</span>
+        <span class="legend-item"><i style="background:#e0322b"></i>特別警戒区域</span>
+      </div>
+      <div id="legend-flood" class="legend-row" hidden>
+        <span class="legend-name">洪水（浸水の深さ）</span>
+        <span class="legend-scale"><i style="background:#d6ecf8" title="0.5m未満"></i><i style="background:#b0d8f1" title="0.5〜1m"></i><i style="background:#86c0e7" title="1〜2m"></i><i style="background:#5ca5da" title="2〜3m"></i><i style="background:#3a88ca" title="3〜5m"></i><i style="background:#236bb2" title="5〜10m"></i><i style="background:#164e92" title="10〜20m"></i><i style="background:#0d3470" title="20m以上"></i></span>
+        <span class="legend-ticks" style="width:176px"><span>0.5m未満</span><span>20m以上</span></span>
+      </div>
+      <div id="legend-tsunami" class="legend-row" hidden>
+        <span class="legend-name">津波（浸水の深さ）</span>
+        <span class="legend-scale"><i style="background:#ece4f5" title="0.3m未満"></i><i style="background:#d3c2ea" title="0.3〜1m"></i><i style="background:#b79ddb" title="1〜2m"></i><i style="background:#9a77ca" title="2〜5m"></i><i style="background:#7b52b4" title="5〜10m"></i><i style="background:#5e3196" title="10〜20m"></i><i style="background:#401a73" title="20m以上"></i></span>
+        <span class="legend-ticks" style="width:154px"><span>0.3m未満</span><span>20m以上</span></span>
+      </div>
+      <div id="legend-surge" class="legend-row" hidden>
+        <span class="legend-name">高潮（浸水の深さ）</span>
+        <span class="legend-scale"><i style="background:#d8f2ee" title="0.3m未満"></i><i style="background:#ace2da" title="0.3〜0.5m"></i><i style="background:#7dcdc2" title="0.5〜1m"></i><i style="background:#52b5a8" title="1〜3m"></i><i style="background:#30998d" title="3〜5m"></i><i style="background:#1d7970" title="5〜10m"></i><i style="background:#105953" title="10m以上"></i></span>
+        <span class="legend-ticks" style="width:154px"><span>0.3m未満</span><span>10m以上</span></span>
+      </div>
+      <p class="hazard-caution">色のない場所も安全とは限りません。</p>
+    </div>
+    <div id="route-idle" class="route-box">
+      <button type="button" id="route-auto" class="route-main" disabled>仮の現在地から道を探す</button>
+      <button type="button" id="route-start" class="route-sub" disabled>自分で経路を引く</button>
+    </div>
+    <div id="auto-box" class="route-box" hidden>
+      <p id="auto-status" class="route-status" role="status" aria-live="polite"></p>
+      <div class="route-actions">
+        <button type="button" id="auto-nearest">近くの避難所へ</button>
+        <button type="button" id="auto-cancel">やめる</button>
+      </div>
+      <button type="button" id="auto-edit" class="route-main auto-edit" hidden>この道を保存・手直しする</button>
+    </div>
+    <div id="route-draw" class="route-box" hidden>
+      <p id="route-status" class="route-status" role="status" aria-live="polite"></p>
+      <div class="route-actions">
+        <button type="button" id="route-undo">1つ戻す</button>
+        <button type="button" id="route-cancel">やめる</button>
+      </div>
+      <div id="route-save-box" class="route-save" hidden>
+        <label for="route-name">経路の名前</label>
+        <input type="text" id="route-name" maxlength="40">
+        <button type="button" id="route-save" class="route-main">お気に入りに保存</button>
+      </div>
+    </div>
+    <div id="route-list" class="route-list" hidden></div>
+    <p id="evac-note" class="evac-note">複数選ぶと、選んだすべてに対応する避難所を表示します。「道を探す」は危険範囲をなるべく避けた道を計算しますが、道のデータ（OpenStreetMap）に抜けや誤りがあることもあります。経路は参考で、実際に通れるとは限りません。一度歩いて確かめてください。経路はこの端末に保存します。「Googleマップで開く」を押すと位置がGoogleへ送られ、道はGoogleが選びます。避難所・危険範囲のデータ：広島県 DoboX（土砂災害警戒区域、洪水・津波・高潮の浸水想定〈洪水・高潮は想定最大規模〉）。開設・混雑の状況はこのアプリには出ないため、災害のときは広島県防災Webや市町の情報を確かめてください。</p>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/evac.js"></script>
+  <script src="js/route.js"></script>
+</body>
+</html>
