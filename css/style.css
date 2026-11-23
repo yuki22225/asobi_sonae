@@ -94,6 +94,89 @@ header p {
   display: none;
 }
 
+/* 動物の避難 */
+.pet-box {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f6f7f4;
+  border-radius: 8px;
+}
+
+.pet-box[hidden],
+.pet-box [hidden] {
+  display: none;
+}
+
+.pet-title {
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.pet-choices {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.pet-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 2px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.pet-choice span {
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+.pet-choice[aria-pressed="true"] {
+  border: 2px solid #2c6e49;
+  background: #e8f3ec;
+  font-weight: bold;
+}
+
+.pet-status {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  font-weight: bold;
+  color: #2c6e49;
+}
+
+.pet-marker span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid #1f78b4;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  font-size: 1.3rem;
+}
+
+.pet-marker.risky span {
+  border-color: #e8590c;
+}
+
+.pet-marker i {
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  font-style: normal;
+  font-size: 0.95rem;
+}
+
 /* 仮の現在地の印 */
 .auto-here span {
   display: block;

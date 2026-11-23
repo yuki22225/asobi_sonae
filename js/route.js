@@ -210,6 +210,7 @@ function showResult(shelter, steps, types, start) {
   const { length, danger } = summarize(steps, types);
   const goal = { name: shelter.name, lat: shelter.lat, lng: shelter.lng, types: shelter.types };
   autoResult = routePoints(start, steps, goal);
+  preparePetPath(steps, types, length, goal);
   steps.forEach(([seg]) => {
     const risky = hazardLevels(seg.mark, types).some(([, level]) => level > 0);
     L.polyline(seg.pts, { color: 'white', weight: 9, opacity: 0.9, interactive: false }).addTo(autoLayer);
@@ -224,7 +225,159 @@ function showResult(shelter, steps, types, start) {
     : 'チェックした災害の危険範囲は通りません';
   setAutoStatus(`${goal.name}まで 約${meters}m ／ 徒歩 約${Math.max(1, Math.round(meters / WALK_M_PER_MIN))}分。${dangerText}`);
   document.getElementById('auto-edit').hidden = false;
+  document.getElementById('pet-box').hidden = false;
+  document.getElementById('auto-nearest').hidden = true;
+  document.getElementById('auto-stop').hidden = false;
+  autoMarker.dragging.disable();
 }
+
+// ------ 動物の避難（地図に出した徒歩の時間と同じ時間をかけて、道を進む） ------
+const PETS = {
+  pig: { name: 'こぶた', icon: '🐷' },
+  tanuki: { name: 'たぬき', icon: '🦝' },
+  fox: { name: 'きつね', icon: '🦊' },
+  cat: { name: 'ねこ', icon: '🐱' }
+};
+let petKind = 'pig';
+let petPath = null;           // { pts: [[緯度, 経度, ここまでの距離, ここまでの区間が危険か]], length, seconds, goal }
+let petMarker = null;
+let petElapsed = 0;           // 進んだ秒数（一時停止の間は数えない）
+let petStartedAt = null;      // 動いている間だけ、動き始めた時刻が入る
+let petTimer = null;
+
+function walkMinutes(meters) {
+  return Math.max(1, Math.round(meters / WALK_M_PER_MIN));
+}
+
+function preparePetPath(steps, types, length, goal) {
+  resetPet();
+  const pts = [];
+  let d = 0;
+  steps.forEach(([seg, dir]) => {
+    const risky = hazardLevels(seg.mark, types).some(([, level]) => level > 0);
+    const line = dir === 1 ? seg.pts : [...seg.pts].reverse();
+    line.forEach((p, k) => {
+      if (pts.length > 0) {
+        if (k === 0) return;
+        const last = pts[pts.length - 1];
+        d += calcDistance(last[0], last[1], p[0], p[1]);
+      }
+      pts.push([p[0], p[1], d, risky]);
+    });
+  });
+  // 地図に出した「徒歩 約○分」とちょうど同じ時間で着くようにする
+  petPath = { pts, length: d, seconds: walkMinutes(length) * 60, goal };
+}
+
+function petPosition(meters) {
+  const pts = petPath.pts;
+  let i = 1;
+  while (i < pts.length - 1 && pts[i][2] < meters) i++;
+  const a = pts[i - 1], b = pts[i];
+  const t = b[2] > a[2] ? Math.min(1, Math.max(0, (meters - a[2]) / (b[2] - a[2]))) : 1;
+  return { lat: a[0] + (b[0] - a[0]) * t, lng: a[1] + (b[1] - a[1]) * t, risky: b[3] };
+}
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+  return `${m}分${String(s).padStart(2, '0')}秒`;
+}
+
+function petIcon(risky) {
+  return L.divIcon({
+    className: 'pet-marker' + (risky ? ' risky' : ''),
+    html: `<span>${PETS[petKind].icon}</span>${risky ? '<i>⚠</i>' : ''}`,
+    iconSize: [36, 36], iconAnchor: [18, 18]
+  });
+}
+
+function petElapsedNow() {
+  return petElapsed + (petStartedAt ? (performance.now() - petStartedAt) / 1000 : 0);
+}
+
+function updatePet() {
+  if (!petPath) return;
+  const elapsed = Math.min(petElapsedNow(), petPath.seconds);
+  const meters = petPath.length * (elapsed / petPath.seconds);
+  const pos = petPosition(meters);
+  if (!petMarker) {
+    petMarker = L.marker([pos.lat, pos.lng], { icon: petIcon(pos.risky), interactive: false, zIndexOffset: 2000 }).addTo(autoLayer);
+    petMarker.risky = pos.risky;
+  } else {
+    petMarker.setLatLng([pos.lat, pos.lng]);
+    if (petMarker.risky !== pos.risky) {
+      petMarker.setIcon(petIcon(pos.risky));
+      petMarker.risky = pos.risky;
+    }
+  }
+  const pet = PETS[petKind];
+  const status = document.getElementById('pet-status');
+  if (elapsed >= petPath.seconds) {
+    stopPetTimer();
+    status.textContent = `${pet.icon}${pet.name}が${petPath.goal.name}に避難できました！ 約${Math.round(petPath.length)}m・${formatTime(petPath.seconds)}`;
+    document.getElementById('pet-pause').hidden = true;
+    return;
+  }
+  const left = Math.max(0, petPath.length - meters);
+  status.textContent = `${pet.icon}${pet.name} 避難中：のこり 約${Math.round(left)}m・${formatTime(petPath.seconds - elapsed)}` +
+    `（${formatTime(elapsed)} 経過）` + (pos.risky ? '　⚠ 危険範囲を通っています' : '');
+}
+
+function stopPetTimer() {
+  if (petStartedAt) petElapsed += (performance.now() - petStartedAt) / 1000;
+  petStartedAt = null;
+  clearInterval(petTimer);
+  petTimer = null;
+}
+
+function runPetTimer() {
+  petStartedAt = performance.now();
+  petTimer = setInterval(updatePet, 250);
+}
+
+function startPet() {
+  if (!petPath || petStartedAt) return;
+  petElapsed = 0;
+  runPetTimer();
+  document.getElementById('pet-go').hidden = true;
+  document.getElementById('pet-pause').hidden = false;
+  document.getElementById('pet-pause').textContent = '一時停止';
+  document.getElementById('pet-reset').hidden = false;
+  updatePet();
+}
+
+function resetPet() {
+  stopPetTimer();
+  petElapsed = 0;
+  if (petMarker) autoLayer.removeLayer(petMarker);
+  petMarker = null;
+  document.getElementById('pet-go').hidden = false;
+  document.getElementById('pet-pause').hidden = true;
+  document.getElementById('pet-reset').hidden = true;
+  document.getElementById('pet-status').textContent = '';
+}
+
+document.querySelectorAll('.pet-choice').forEach(btn => btn.addEventListener('click', () => {
+  petKind = btn.dataset.pet;
+  document.querySelectorAll('.pet-choice').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+  if (petMarker) {
+    petMarker.setIcon(petIcon(petMarker.risky));
+    updatePet();
+  }
+}));
+document.getElementById('pet-go').addEventListener('click', startPet);
+document.getElementById('pet-pause').addEventListener('click', () => {
+  const btn = document.getElementById('pet-pause');
+  if (petStartedAt) {
+    stopPetTimer();
+    btn.textContent = 'つづける';
+    updatePet();
+  } else {
+    runPetTimer();
+    btn.textContent = '一時停止';
+  }
+});
+document.getElementById('pet-reset').addEventListener('click', resetPet);
 
 // ------ 画面の操作 ------
 function startAuto() {
@@ -242,6 +395,12 @@ function startAuto() {
 }
 
 function clearAutoResult() {
+  resetPet();
+  petPath = null;
+  document.getElementById('pet-box').hidden = true;
+  document.getElementById('auto-nearest').hidden = false;
+  document.getElementById('auto-stop').hidden = true;
+  if (autoMarker) autoMarker.dragging.enable();
   autoResult = null;
   autoLayer.eachLayer(layer => { if (layer !== autoMarker) autoLayer.removeLayer(layer); });
   document.getElementById('auto-edit').hidden = true;
@@ -249,6 +408,9 @@ function clearAutoResult() {
 }
 
 function stopAuto() {
+  resetPet();
+  petPath = null;
+  document.getElementById('pet-box').hidden = true;
   autoMode = false;
   autoLayer.clearLayers();
   autoLayer.remove();
@@ -260,7 +422,7 @@ function stopAuto() {
 
 // 避難所を押したとき（evac.js から呼ばれる）。この画面で使ったら true を返す
 function autoPick(shelter) {
-  if (!autoMode) return false;
+  if (!autoMode || autoResult) return false;
   findRoute(shelter);
   return true;
 }
@@ -268,6 +430,7 @@ function autoPick(shelter) {
 document.getElementById('route-auto').addEventListener('click', startAuto);
 document.getElementById('auto-nearest').addEventListener('click', () => findRoute(null));
 document.getElementById('auto-cancel').addEventListener('click', stopAuto);
+document.getElementById('auto-stop').addEventListener('click', clearAutoResult);
 document.getElementById('auto-edit').addEventListener('click', () => {
   const result = autoResult;
   stopAuto();
@@ -276,11 +439,11 @@ document.getElementById('auto-edit').addEventListener('click', () => {
   updateDraft();
 });
 map.on('click', e => {
-  if (!autoMode) return;
+  if (!autoMode || autoResult) return;
   autoMarker.setLatLng(e.latlng);
   clearAutoResult();
 });
 document.querySelectorAll('.evac-check').forEach(c => c.addEventListener('change', () => {
   document.getElementById('route-auto').disabled = selectedTypes().length === 0;
-  if (autoMode) clearAutoResult();
+  if (autoMode && !petStartedAt) clearAutoResult();
 }));
