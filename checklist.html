@@ -6,13 +6,17 @@
   <title>遊んで、備える ― チェックシート</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="check-page">
   <header>
     <div class="map-title-row">
       <a href="index.html" class="back-btn">← ホーム</a>
       <h1>チェックシート</h1>
     </div>
   </header>
-  <p class="coming">災害への備えのチェックシートは準備中です。</p>
+  <nav id="check-tabs" class="check-tabs" role="tablist" aria-label="チェックシートの種類"></nav>
+  <main id="check-body" class="check-body">
+    <p class="coming">読み込み中…</p>
+  </main>
+  <script src="js/checklist.js"></script>
 </body>
 </html>

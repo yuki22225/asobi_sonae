@@ -413,10 +413,206 @@ body.home {
   margin-right: 6px;
 }
 
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.home-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  aspect-ratio: 1 / 0.85;
+  background: white;
+  color: #2c6e49;
+  font-size: 0.95rem;
+  font-weight: bold;
+  border-radius: 16px;
+  text-decoration: none;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+}
+
+.home-tile:active {
+  transform: scale(0.97);
+}
+
+.home-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
 /* 準備中のページ */
 .coming {
   padding: 40px 20px;
   text-align: center;
   color: #555;
   line-height: 1.8;
+}
+
+/* チェックシート */
+body.check-page {
+  height: auto;
+  min-height: 100vh;
+  background: #f5f5f0;
+}
+
+.check-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 10px 12px;
+  background: #f5f5f0;
+  border-bottom: 1px solid #ddd;
+}
+
+.check-tab {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 7px 12px;
+  border: 1px solid #2c6e49;
+  border-radius: 10px;
+  background: white;
+  color: #2c6e49;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.check-tab[aria-selected="true"] {
+  background: #2c6e49;
+  color: white;
+}
+
+.check-tab-count {
+  font-size: 0.7rem;
+  font-weight: normal;
+  opacity: 0.85;
+}
+
+.check-body {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 12px 14px 40px;
+}
+
+.check-head,
+.check-group,
+.check-foot {
+  background: white;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.check-lead {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.check-progress {
+  height: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  background: #e3e7e3;
+  overflow: hidden;
+}
+
+.check-progress span {
+  display: block;
+  height: 100%;
+  background: #2f9e62;
+  transition: width 0.3s;
+}
+
+.check-progress-text {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #2c6e49;
+}
+
+.check-group h2 {
+  font-size: 0.95rem;
+  color: #2c6e49;
+  margin-bottom: 6px;
+}
+
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid #eee;
+  cursor: pointer;
+}
+
+.check-item input {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  accent-color: #2f9e62;
+}
+
+.check-text b {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+.check-text small {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.75rem;
+  color: #777;
+  line-height: 1.5;
+}
+
+.check-item input:checked + .check-text b {
+  color: #888;
+  text-decoration: line-through;
+}
+
+.check-map-link {
+  display: inline-block;
+  margin: 0 0 6px 30px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #2c6e49;
+}
+
+.check-note {
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.check-source {
+  margin-top: 8px;
+  font-size: 0.72rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.check-source a {
+  color: #2c6e49;
+}
+
+.check-reset {
+  margin-top: 10px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f5f5f0;
+  font-size: 0.75rem;
+  cursor: pointer;
 }
