@@ -152,6 +152,13 @@ function stopDrawing() {
 }
 
 document.getElementById('route-start').addEventListener('click', startDrawing);
+
+// パネルをたたむ／ひらく（地図を広く見たいとき用）
+document.getElementById('evac-fold').addEventListener('click', e => {
+  const folded = document.getElementById('evac-panel').classList.toggle('folded');
+  e.currentTarget.textContent = folded ? '▲ ひらく' : '▼ たたむ';
+  e.currentTarget.setAttribute('aria-expanded', String(!folded));
+});
 document.getElementById('route-undo').addEventListener('click', () => {
   if (draft.goal) draft.goal = null;
   else draft.points.pop();

@@ -16,7 +16,10 @@
   </header>
   <div id="map"></div>
   <div id="evac-panel" class="evac-panel">
-    <p class="evac-title">何から避難しますか？</p>
+    <div class="evac-head">
+      <p class="evac-title">何から避難しますか？</p>
+      <button type="button" id="evac-fold" class="evac-fold" aria-expanded="true" aria-controls="evac-panel">▼ たたむ</button>
+    </div>
     <div class="evac-checks">
       <label><input type="checkbox" class="evac-check" value="土砂災害">土砂災害</label>
       <label><input type="checkbox" class="evac-check" value="洪水">洪水</label>
@@ -25,7 +28,7 @@
       <label><input type="checkbox" class="evac-check" value="地震">地震</label>
     </div>
     <p id="evac-count" class="evac-count" role="status" aria-live="polite">何から避難するかを選んでください</p>
-    <a class="bousai-link" href="https://www.bousai.pref.hiroshima.lg.jp/" target="_blank" rel="noopener">避難所が開いているか・混み具合を見る（広島県防災Web）</a>
+    <a class="bousai-link" href="https://www.bousai.pref.hiroshima.lg.jp/" target="_blank" rel="noopener">避難所の開設・混雑（広島県防災Web）</a>
     <div id="hazard-legend" class="hazard-legend" hidden>
       <p id="hazard-zoom" class="hazard-zoom">地図を拡大すると、危険な範囲に色がつきます</p>
       <div id="legend-dosha" class="legend-row" hidden>
@@ -92,7 +95,7 @@
       </div>
     </div>
     <div id="route-list" class="route-list" hidden></div>
-    <p id="evac-note" class="evac-note">複数選ぶと、選んだすべてに対応する避難所を表示します。「道を探す」は危険範囲をなるべく避けた道を計算しますが、道のデータ（OpenStreetMap）に抜けや誤りがあることもあります。経路は参考で、実際に通れるとは限りません。一度歩いて確かめてください。経路はこの端末に保存します。「Googleマップで開く」を押すと位置がGoogleへ送られ、道はGoogleが選びます。避難所・危険範囲のデータ：広島県 DoboX（土砂災害警戒区域、洪水・津波・高潮の浸水想定〈洪水・高潮は想定最大規模〉）。開設・混雑の状況はこのアプリには出ないため、災害のときは広島県防災Webや市町の情報を確かめてください。</p>
+    <details id="evac-note" class="evac-note"><summary>ご注意・データについて</summary><p>複数選ぶと、選んだすべてに対応する避難所を表示します。「道を探す」は危険範囲をなるべく避けた道を計算しますが、道のデータ（OpenStreetMap）に抜けや誤りがあることもあります。経路は参考で、実際に通れるとは限りません。一度歩いて確かめてください。経路はこの端末に保存します。「Googleマップで開く」を押すと位置がGoogleへ送られ、道はGoogleが選びます。避難所・危険範囲のデータ：広島県 DoboX（土砂災害警戒区域、洪水・津波・高潮の浸水想定〈洪水・高潮は想定最大規模〉）。開設・混雑の状況はこのアプリには出ないため、災害のときは広島県防災Webや市町の情報を確かめてください。</p></details>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="js/map.js"></script>

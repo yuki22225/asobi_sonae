@@ -313,9 +313,36 @@ header p {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+.evac-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
 .evac-title {
   font-weight: bold;
-  margin-bottom: 8px;
+}
+
+.evac-fold {
+  flex: none;
+  padding: 3px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: white;
+  color: #555;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+/* たたんだときは見出しの行だけ残す */
+.evac-panel.folded > :not(.evac-head) {
+  display: none;
+}
+
+.evac-panel.folded .evac-head {
+  margin-bottom: 0;
 }
 
 .evac-checks {
@@ -343,6 +370,53 @@ header p {
   font-size: 0.7rem;
   line-height: 1.5;
   color: #666;
+}
+
+.evac-note summary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.evac-note p {
+  margin-top: 4px;
+}
+
+/* スマホでは余白と文字を少し詰める */
+@media (max-width: 600px) {
+  .evac-panel {
+    padding: 10px 12px;
+    bottom: 22px;
+    max-height: 55vh;
+  }
+
+  .evac-checks {
+    gap: 4px 10px;
+  }
+
+  .evac-checks label {
+    font-size: 0.85rem;
+  }
+
+  .evac-count {
+    margin-top: 6px;
+    font-size: 0.9rem;
+  }
+
+  .bousai-link {
+    padding: 5px 8px;
+    font-size: 0.75rem;
+  }
+
+  .evac-panel .route-box {
+    margin-top: 8px;
+  }
+
+  .evac-panel .route-main,
+  .evac-panel .route-sub {
+    padding-top: 7px;
+    padding-bottom: 7px;
+    font-size: 0.9rem;
+  }
 }
 
 .bousai-link {
