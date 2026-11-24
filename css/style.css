@@ -177,6 +177,35 @@ header p {
   font-size: 0.95rem;
 }
 
+.pet-found {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #8a5a00;
+}
+
+.treasure-marker span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #fff8e1;
+  border: 2px solid #f2b705;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  font-size: 1.1rem;
+  animation: treasure-bob 1.6s ease-in-out infinite;
+}
+
+@keyframes treasure-bob {
+  50% { transform: translateY(-4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .treasure-marker span { animation: none; }
+}
+
 /* 仮の現在地の印 */
 .auto-here span {
   display: block;
@@ -698,4 +727,60 @@ body.check-page {
   background: #f5f5f0;
   font-size: 0.75rem;
   cursor: pointer;
+}
+
+/* 大切なもの */
+.treasure-go {
+  margin: 8px 0 0;
+}
+
+.treasure-city {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.treasure-city small {
+  font-size: 0.75rem;
+  color: #888;
+  font-weight: normal;
+}
+
+.treasure-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.treasure-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 10px 4px;
+  border-radius: 10px;
+  background: #fff8e1;
+  border: 1px solid #f2d47a;
+  text-align: center;
+}
+
+.treasure-card.locked {
+  background: #f1f1ee;
+  border-color: #ddd;
+  color: #aaa;
+}
+
+.treasure-icon {
+  font-size: 1.8rem;
+  line-height: 1.2;
+}
+
+.treasure-card b {
+  font-size: 0.78rem;
+  font-weight: bold;
+}
+
+.treasure-card small {
+  font-size: 0.65rem;
+  color: #999;
 }

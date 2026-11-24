@@ -1,0 +1,80 @@
+{
+  "note": "ご当地グルメ・名産品。source が null のものは出典を探し直す予定",
+  "cities": [
+    { "city": "広島市", "items": [
+      { "name": "牡蠣", "icon": "🦪" },
+      { "name": "お好み焼き", "icon": "🥞" },
+      { "name": "もみじ饅頭", "icon": "🍁" }
+    ], "source": { "name": "広島市「ザ・広島ブランド」", "url": "https://www.city.hiroshima.lg.jp/soshiki/11/216369.html" } },
+    { "city": "呉市", "items": [
+      { "name": "海軍カレー", "icon": "🍛" }
+    ], "source": null },
+    { "city": "竹原市", "items": [
+      { "name": "たけはら焼", "icon": "🥞" },
+      { "name": "たけはら魚飯", "icon": "🍚" }
+    ], "source": { "name": "国土交通省 中国地方整備局の資料", "url": "https://wwwtb.mlit.go.jp/chugoku/content/000370433.pdf" } },
+    { "city": "三原市", "items": [
+      { "name": "タコ", "icon": "🐙" }
+    ], "source": { "name": "Dive! Hiroshima（広島県観光連盟）", "url": "https://dive-hiroshima.com/feature/seafood-tako/" } },
+    { "city": "尾道市", "items": [
+      { "name": "尾道ラーメン", "icon": "🍜" },
+      { "name": "レモン", "icon": "🍋" }
+    ], "source": null },
+    { "city": "福山市", "items": [
+      { "name": "鯛", "icon": "🐟" }
+    ], "source": null },
+    { "city": "府中市", "items": [
+      { "name": "備後府中焼き", "icon": "🥞" },
+      { "name": "府中みそ", "icon": "🥣" }
+    ], "source": { "name": "府中市の資料", "url": "https://www.city.fuchu.hiroshima.jp/material/files/group/29/1252-P18-19.pdf" } },
+    { "city": "三次市", "items": [
+      { "name": "ワイン", "icon": "🍷" }
+    ], "source": null },
+    { "city": "庄原市", "items": [
+      { "name": "比婆牛", "icon": "🥩" },
+      { "name": "りんご", "icon": "🍎" }
+    ], "source": { "name": "広島県 県政広報", "url": "https://www.pref.hiroshima.lg.jp/site/dayori/202307-web1.html" } },
+    { "city": "大竹市", "items": [
+      { "name": "あたたハマチとレモン", "icon": "🐟" }
+    ], "source": { "name": "広島市 市民と市政", "url": "https://www.city.hiroshima.lg.jp/www/koho/shimintoshiseir060901/shimintoshisei/topics/top03.html" } },
+    { "city": "東広島市", "items": [
+      { "name": "日本酒", "icon": "🍶" },
+      { "name": "西条柿", "icon": "🟠" }
+    ], "source": null },
+    { "city": "廿日市市", "items": [
+      { "name": "もみじ饅頭", "icon": "🍁" }
+    ], "source": null },
+    { "city": "安芸高田市", "items": [
+      { "name": "なす", "icon": "🍆" },
+      { "name": "チンゲンサイ", "icon": "🥬" }
+    ], "source": { "name": "広島県の資料", "url": "https://www.pref.hiroshima.lg.jp/uploaded/attachment/673994.pdf" } },
+    { "city": "江田島市", "items": [
+      { "name": "牡蠣", "icon": "🦪" },
+      { "name": "みかん", "icon": "🍊" },
+      { "name": "はちみつ", "icon": "🍯" }
+    ], "source": { "name": "広島県 徹底解剖！ひろしまラボ", "url": "https://www.pref.hiroshima.lg.jp/lab/topics/20230714/01/" } },
+    { "city": "熊野町", "items": [
+      { "name": "熊野筆", "icon": "🖌️" }
+    ], "source": { "name": "広島中央地域のガイド（呉市）", "url": "https://www.city.kure.lg.jp/uploaded/attachment/101254.pdf" } },
+    { "city": "安芸太田町", "items": [
+      { "name": "祇園坊柿", "icon": "🟠" },
+      { "name": "白菜", "icon": "🥬" }
+    ], "source": { "name": "広島市「ザ・広島ブランド」・広島県の資料", "url": "https://www.pref.hiroshima.lg.jp/uploaded/attachment/673994.pdf" } },
+    { "city": "北広島町", "items": [
+      { "name": "ほうれんそう", "icon": "🥬" }
+    ], "source": { "name": "広島県の資料", "url": "https://www.city.hiroshima.lg.jp/_res/projects/default_project/_page_/001/040/417/prhinmoku8.pdf" } },
+    { "city": "大崎上島町", "items": [
+      { "name": "レモン", "icon": "🍋" },
+      { "name": "みかん", "icon": "🍊" },
+      { "name": "トマト", "icon": "🍅" }
+    ], "source": { "name": "広島県の資料", "url": "https://www.pref.hiroshima.lg.jp/uploaded/attachment/673995.pdf" } },
+    { "city": "世羅町", "items": [
+      { "name": "世羅梨", "icon": "🍐" },
+      { "name": "松きのこ", "icon": "🍄" },
+      { "name": "いちご", "icon": "🍓" }
+    ], "source": { "name": "広島県の資料", "url": "https://www.pref.hiroshima.lg.jp/uploaded/attachment/673995.pdf" } },
+    { "city": "神石高原町", "items": [
+      { "name": "野沢菜", "icon": "🥬" }
+    ], "source": { "name": "広島県の資料", "url": "https://www.pref.hiroshima.lg.jp/uploaded/attachment/673994.pdf" } }
+  ]
+}

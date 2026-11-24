@@ -266,7 +266,83 @@ function preparePetPath(steps, types, length, goal) {
     });
   });
   // 地図に出した「徒歩 約○分」とちょうど同じ時間で着くようにする
-  petPath = { pts, length: d, seconds: walkMinutes(length) * 60, goal };
+  petPath = { pts, length: d, seconds: walkMinutes(length) * 60, goal, items: [] };
+  placeTreasures();
+}
+
+// ------ 道の途中の名産品（拾うと「大切なもの」に入る） ------
+const TREASURE_KEY = 'sonaeTreasures';
+let specialties = null;
+
+fetch('data/specialties.json').then(res => res.json()).then(data => {
+  specialties = new Map(data.cities.map(c => [c.city, c.items]));
+}).catch(() => { specialties = new Map(); });
+
+function getTreasures() {
+  try {
+    return JSON.parse(localStorage.getItem(TREASURE_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function saveTreasure(city, item) {
+  const all = getTreasures();
+  const key = `${city}:${item.name}`;
+  if (!all[key]) all[key] = { city, name: item.name, icon: item.icon, date: new Date().toLocaleDateString('sv-SE') };
+  try {
+    localStorage.setItem(TREASURE_KEY, JSON.stringify(all));
+  } catch {
+    // 保存できないブラウザでは、拾った表示だけにする
+  }
+}
+
+// その場所の市町は、一番近い避難所の市町とする（位置を外に送らずに決めるため）
+function cityAt(lat, lng) {
+  let best = null, bestD = Infinity;
+  const kx = Math.cos(lat * Math.PI / 180);
+  shelters.forEach(s => {
+    const d = (s.lat - lat) ** 2 + ((s.lng - lng) * kx) ** 2;
+    if (d < bestD) { bestD = d; best = s; }
+  });
+  if (!best) return null;
+  return best.city.startsWith('広島市') ? '広島市' : best.city;
+}
+
+function treasureIcon(item) {
+  return L.divIcon({ className: 'treasure-marker', html: `<span>${item.icon}</span>`, iconSize: [30, 30], iconAnchor: [15, 15] });
+}
+
+function placeTreasures() {
+  if (!specialties || !shelters || petPath.length < 50) return;
+  const owned = getTreasures();
+  const fractions = petPath.length < 400 ? [0.5] : [1 / 3, 2 / 3];
+  fractions.forEach(f => {
+    const d = petPath.length * f;
+    const pos = petPosition(d);
+    const city = cityAt(pos.lat, pos.lng);
+    const pool = specialties.get(city);
+    if (!pool || pool.length === 0) return;
+    const placed = petPath.items.map(t => `${t.city}:${t.item.name}`);
+    const fresh = pool.filter(it => !owned[`${city}:${it.name}`] && !placed.includes(`${city}:${it.name}`));
+    const choices = fresh.length > 0 ? fresh : pool;
+    const item = choices[Math.floor(Math.random() * choices.length)];
+    const marker = L.marker([pos.lat, pos.lng], { icon: treasureIcon(item), interactive: false, zIndexOffset: 1500 }).addTo(autoLayer);
+    petPath.items.push({ d, city, item, marker, got: false });
+  });
+}
+
+function pickTreasures(meters) {
+  petPath.items.forEach(t => {
+    if (t.got || meters < t.d) return;
+    t.got = true;
+    autoLayer.removeLayer(t.marker);
+    saveTreasure(t.city, t.item);
+  });
+  const got = petPath.items.filter(t => t.got);
+  document.getElementById('pet-found').textContent = got.length > 0
+    ? 'ひろった物：' + got.map(t => `${t.item.icon}${t.item.name}（${t.city}）`).join('、') + '　→「大切なもの」に入りました'
+    : '';
 }
 
 function petPosition(meters) {
@@ -300,6 +376,7 @@ function updatePet() {
   const elapsed = Math.min(petElapsedNow(), petPath.seconds);
   const meters = petPath.length * (elapsed / petPath.seconds);
   const pos = petPosition(meters);
+  pickTreasures(meters);
   if (!petMarker) {
     petMarker = L.marker([pos.lat, pos.lng], { icon: petIcon(pos.risky), interactive: false, zIndexOffset: 2000 }).addTo(autoLayer);
     petMarker.risky = pos.risky;
@@ -351,6 +428,13 @@ function resetPet() {
   petElapsed = 0;
   if (petMarker) autoLayer.removeLayer(petMarker);
   petMarker = null;
+  if (petPath) petPath.items.forEach(t => {
+    if (t.got) {
+      t.got = false;
+      t.marker.addTo(autoLayer);
+    }
+  });
+  document.getElementById('pet-found').textContent = '';
   document.getElementById('pet-go').hidden = false;
   document.getElementById('pet-pause').hidden = true;
   document.getElementById('pet-reset').hidden = true;

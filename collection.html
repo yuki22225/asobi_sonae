@@ -6,13 +6,25 @@
   <title>遊んで、備える ― 大切なもの</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="check-page">
   <header>
     <div class="map-title-row">
       <a href="index.html" class="back-btn">← ホーム</a>
       <h1>大切なもの</h1>
     </div>
   </header>
-  <p class="coming">地図で避難所まで進んだときに拾った防災グッズが、ここに集まります（準備中）。</p>
+  <main class="check-body">
+    <section class="check-head">
+      <p class="check-lead">地図で動物を避難させると、道の途中で、その町のご当地グルメや名産品をひろえます。</p>
+      <div class="check-progress"><span id="treasure-bar"></span></div>
+      <p id="treasure-count" class="check-progress-text">読み込み中…</p>
+      <a href="map.html" class="check-map-link treasure-go">地図で避難させる →</a>
+    </section>
+    <div id="treasure-list"></div>
+    <section class="check-foot">
+      <p class="check-source">ひろった物はこの端末だけに保存します。名産品の出典は、それぞれの市町の下に書いています。</p>
+    </section>
+  </main>
+  <script src="js/collection.js"></script>
 </body>
 </html>
