@@ -508,6 +508,33 @@ header p {
   opacity: 0.8;
 }
 
+/* 地図／写真の切り替え（地図の右上） */
+.base-switch {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
+}
+
+.base-switch button {
+  padding: 7px 12px;
+  border: none;
+  background: white;
+  color: #333;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.base-switch button + button {
+  border-left: 1px solid #ddd;
+}
+
+.base-switch button[aria-pressed="true"] {
+  background: #2c6e49;
+  color: white;
+}
+
 
 /* ホーム */
 body.home {
